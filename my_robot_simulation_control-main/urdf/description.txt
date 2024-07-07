@@ -1,0 +1,6 @@
+lidar range: 30mm-4m
+camera resolution: 1024x1024
+robot sizes: 190x160x130 in mm
+
+The main coordinate frame for the robot will be called base_link (REP 105 - Coordinate Frames for Mobile Platforms)
+The orientation of this coordinate frame will be X-forward, Y-left, Z-up (REP 103 - Standard Units of Measure and Coordinate Conventions)

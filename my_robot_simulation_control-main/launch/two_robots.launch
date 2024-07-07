@@ -1,0 +1,90 @@
+<launch>
+    <arg name="x1" default="-25" />   
+    <arg name="y1" default="49" />
+
+    <arg name="x2" default="-23" />   
+    <arg name="y2" default="49" /> 
+
+    <arg name="x3" default="-21" />   
+    <arg name="y3" default="49" /> 
+
+    <arg name="x4" default="-19" />   
+    <arg name="y4" default="49" /> 
+
+    <arg name="x5" default="-17" />   
+    <arg name="y5" default="49" /> 
+
+    <arg name="z1" default="0.215" /> 
+    <arg name="yaw1" default="-1.57" /> 
+
+    <!-- <arg name="x1" default="0" />   
+    <arg name="y1" default="0" />
+    <arg name="x2" default="0" />   
+    <arg name="y2" default="20" /> 
+    <arg name="z1" default="0.215" /> 
+    <arg name="yaw1" default="-1.57" />  -->
+
+    <!--<arg name="init_pose" value="-x $(arg x1) -y $(arg y1) -z $(arg z1)" />-->
+    <param name="robot_description" command="xacro '$(find my_robot_simulation_control)/urdf/robot_model.xacro'" />
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find my_robot_simulation_control)/worlds/no_roof_small_warehouse.world"/>
+        <!-- <arg name="world_name" value="$(find my_robot_simulation_control)/worlds/empty.world"/> -->
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="true"/>
+        <arg name="headless" value="false"/>
+        <arg name="debug" value="false"/>
+    </include>
+
+    <group ns="robot1">
+      <param name="tf_prefix" value="robot1_tf" />
+      <include file="$(find my_robot_simulation_control)/launch/one_robot.launch" >
+        <arg name="init_pose" value="-x $(arg x1) -y $(arg y1) -z $(arg z1) -Y $(arg yaw1)" />
+        <arg name="lidar_topic"  value="scan/robot1" />
+        <arg name="robot_name"  value="robot1" />
+      </include>
+    </group>
+
+    <group ns="robot2">
+      <param name="tf_prefix" value="robot2_tf" />
+      <include file="$(find my_robot_simulation_control)/launch/one_robot.launch" >
+        <arg name="init_pose" value="-x $(arg x2) -y $(arg y2) -z $(arg z1) -Y $(arg yaw1)" />
+        <arg name="robot_name"  value="robot2" />
+        <arg name="lidar_topic"  value="scan/robot2" />
+      </include>
+    </group>
+
+    <group ns="robot3">
+      <param name="tf_prefix" value="robot3_tf" />
+      <include file="$(find my_robot_simulation_control)/launch/one_robot.launch" >
+        <arg name="init_pose" value="-x $(arg x3) -y $(arg y3) -z $(arg z1) -Y $(arg yaw1)" />
+        <arg name="lidar_topic"  value="scan/robot3" />
+        <arg name="robot_name"  value="robot3" />
+      </include>
+    </group>
+
+    <group ns="robot4">
+      <param name="tf_prefix" value="robot4_tf" />
+      <include file="$(find my_robot_simulation_control)/launch/one_robot.launch" >
+        <arg name="init_pose" value="-x $(arg x4) -y $(arg y4) -z $(arg z1) -Y $(arg yaw1)" />
+        <arg name="robot_name"  value="robot4" />
+        <arg name="lidar_topic"  value="scan/robot4" />
+      </include>
+    </group>
+
+    <group ns="robot5">
+      <param name="tf_prefix" value="robot5_tf" />
+      <include file="$(find my_robot_simulation_control)/launch/one_robot.launch" >
+        <arg name="init_pose" value="-x $(arg x5) -y $(arg y5) -z $(arg z1) -Y $(arg yaw1)" />
+        <arg name="robot_name"  value="robot5" />
+        <arg name="lidar_topic"  value="scan/robot5" />
+      </include>
+    </group>
+
+    <!-- <node pkg="my_robot_simulation_control" name="robot1_controller" type="move_goal_robot1.py" /> -->
+    <!-- <node pkg="elevator" name="liftnode" type="lift.py" /> -->
+
+    <!-- <node pkg="my_robot_simulation_control" name="robot2_controller" type="move_goal_robot2.py" /> -->
+
+</launch>

@@ -1,0 +1,55 @@
+<launch>
+    <arg name="x1" default="-24" />   
+    <arg name="y1" default="40" />
+    <arg name="z1" default="0.115" /> 
+    <!--<arg name="init_pose" value="-x $(arg x1) -y $(arg y1) -z $(arg z1)" />-->
+
+    <!-- <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser"
+           args="0.0 0.0 0.0 0.0 0.0 0.0 /map /odom 20" /> -->
+
+    <arg name="static_tf" default="true" />
+    <node if="$(arg static_tf)" pkg="tf2_ros" type="static_transform_publisher" name="odom_wrt_map_tf" args="0 0 0 0 0 0 map odom" /> 
+
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find robot_nav)/config/my_map.yaml"/>  
+
+    <param name="robot_description" command="xacro '$(find my_robot_simulation_control)/urdf/robot_model.xacro'" />
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen" >
+        <param name="publish_frequency" type="double" value="60.0" />
+    </node>
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find my_robot_simulation_control)/worlds/no_roof_small_warehouse.world"/>
+        <!-- <arg name="world_name" value="$(find my_robot_simulation_control)/worlds/empty.world"/> -->
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="true"/>
+        <arg name="headless" value="false"/>
+        <arg name="debug" value="false"/>
+    </include>
+
+    <node name="my_robot_model_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
+          args="-urdf -param robot_description -model my_robot_simulation_control -x $(arg x1) -y $(arg y1) -z $(arg z1)" />
+
+    <!-- Load joint controller configurations from YAML file to parameter server -->
+    <rosparam file="$(find my_robot_simulation_control)/config/control.yaml" command="load"/>
+
+    <!-- load the controllers -->
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/robot" args="left_wheel_controller right_wheel_controller joint_state_controller"/>
+    <!--<node pkg="my_robot_simulation_control" name="send_goal" type="center_pub.py" /> -->
+
+    <!-- <arg name="rviz_conf_file" default="$(find my_robot_simulation_control)/rviz/rviz_config.rviz" />
+
+    <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" />
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf_file)" /> -->
+
+    <!--<include file="$(find robot_nav)/launch/robot_move_base.launch" />-->
+    <!--<node pkg="my_robot_simulation_control" name="first_controller" type="move_goal.py" /> -->
+
+    <!-- package move_base -->
+    <!-- <include file="$(find robot_nav)/launch/robot_move_base.launch"/> -->
+
+
+
+</launch>

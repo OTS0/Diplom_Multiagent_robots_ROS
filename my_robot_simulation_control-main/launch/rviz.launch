@@ -1,0 +1,14 @@
+<launch>
+    <arg name="rviz_conf_file" default="$(find my_robot_simulation_control)/rviz/rviz_config.rviz" />
+
+    <param name="robot_description" command="xacro '$(find my_robot_simulation_control)/urdf/robot_model.xacro'" />
+
+    <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" />
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen" >
+        <param name="publish_frequency" type="double" value="60.0" />
+    </node>
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf_file)" />
+
+</launch>

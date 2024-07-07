@@ -1,0 +1,39 @@
+rostopic pub -1 /robot/left_wheel_controller/command std_msgs/Float64 "data: 1.5"
+
+rostopic pub /cmd_vel geometry_msgs/Twist "linear:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+angular:
+  x: 0.0
+  y: 0.0
+  z: 0.0" 
+
+rostopic pub robot2/goal/point geometry_msgs/Point "
+  x: -4.0
+  y: -4.0
+  z: 0.115" 
+
+rostopic pub /diplom/elevator std_msgs/String "data: '0'" 
+
+rosrun my_robot_simulation_control send_goal.py
+rosrun my_robot_simulation_control move_goal_with_local_planner.py
+
+rosrun my_robot_simulation_control move_goal.py
+
+chmod +x my_node.py 
+
+interesting
+    <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser"
+           args="0.0 0.0 0.0 0.0 0.0 0.0 /base_link /laser 40" />
+
+
+rostopic pub /robot1/goal distributor/Task "topic: ''
+status: 1
+number_robot: 1
+urgently: false
+x: 0.0
+y: 20.0
+level: 2
+start: {secs: 0, nsecs: 0}
+finish: {secs: 0, nsecs: 0}" 

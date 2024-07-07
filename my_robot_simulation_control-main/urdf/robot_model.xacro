@@ -1,0 +1,105 @@
+<?xml version='1.0'?>
+<robot name="robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="wheel_radius" value="0.1" />
+    <xacro:property name="wheel_width" value="0.05" />
+
+    <xacro:property name="chassis_length" value="0.8" />
+    <xacro:property name="chassis_width" value="0.8" />
+    <xacro:property name="chassis_height" value="0.2" />
+
+    <xacro:include filename="$(find my_robot_simulation_control)/urdf/materials.xacro" />
+    <xacro:include filename="$(find my_robot_simulation_control)/urdf/wheel.xacro" />
+    <xacro:include filename="$(find my_robot_simulation_control)/urdf/inertial.xacro" />
+
+    <xacro:include filename="$(find my_robot_simulation_control)/urdf/robot_model.gazebo" />
+        
+    <link name='base_link'>
+    </link>
+
+    <link name="chassis">
+        <visual name="chassis_visual">
+            <origin xyz="${chassis_length/2} 0 ${chassis_height/2}" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <box size="${chassis_length} ${chassis_width} ${chassis_height}" />
+            </geometry>
+            <material name="orange"/>
+        </visual>
+
+        <xacro:inertial_box mass="20" x="${chassis_length}" y="${chassis_width}" z="${chassis_height}">
+            <origin xyz="${chassis_length/2} 0 ${chassis_height/2}" rpy="0.0 0.0 0.0" />
+        </xacro:inertial_box>
+
+        <collision name="chassis_collision">
+            <origin xyz="${chassis_length/2} 0 ${chassis_height/2}" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <box size="${chassis_length} ${chassis_width} ${chassis_height}" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="chassis_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="chassis"/>
+        <origin xyz="${-0.2 * chassis_length} 0 0"/>
+    </joint>
+
+    <link name="caster_wheel">
+        <visual name="caster_wheel_visual">
+            <geometry>
+                <sphere radius="${wheel_radius}" />
+            </geometry>
+            <material name="white"/>
+        </visual>
+
+        <xacro:inertial_sphere mass="4" radius="${wheel_radius}">
+            <origin xyz="0 0 0" rpy="0.0 0.0 0.0" />
+        </xacro:inertial_sphere>
+
+        <collision name="caster_wheel_collision">
+            <origin xyz="0 0 0" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <sphere radius="${wheel_radius}" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="caster_wheel_joint" type="fixed">
+        <parent link="chassis"/>
+        <child link="caster_wheel"/>
+        <origin xyz="${0.8*chassis_length} 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <link name="lidar">
+        <visual name="lidar_visual">
+            <origin xyz="0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry>
+             <box size="0.04 0.04 0.04" />
+            </geometry>
+        </visual>    
+
+        <xacro:inertial_box mass="0.2" x="0.1" y="0.1" z="0.1">
+            <origin xyz="0 0.0 0.0" rpy="0.0 0.0 0.0" />
+        </xacro:inertial_box>
+
+        <collision name="lidar_collision">
+            <origin xyz="${0.002/2} 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <box size="0.04 0.04 0.04" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="lidar_joint" type="fixed">
+        <parent link="chassis"/>
+        <child link="lidar"/>
+        <origin xyz="${chassis_length-0.2} 0 ${1.1*chassis_height}" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+    <xacro:wheel side="left" length="${wheel_width}" radius="${wheel_radius}" joint_xyz="0 ${chassis_width/2+wheel_width/2} 0" joint_rpy="${-pi/2} 0 0" axis_xyz="0 0 1" />
+    <xacro:wheel side="right" length="${wheel_width}" radius="${wheel_radius}" joint_xyz="0 ${-(chassis_width/2+wheel_width/2)} 0" joint_rpy='${-pi/2} 0 0' axis_xyz='0 0 1' />
+
+    <limit effort="10" velocity="10"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+
+</robot>

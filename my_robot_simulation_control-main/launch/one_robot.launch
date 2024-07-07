@@ -1,0 +1,18 @@
+<launch>
+    <arg name="robot_name"/>
+    <arg name="init_pose"/>
+    <arg name="lidar_topic"/>
+
+
+    <node name="spawn_robot_model" pkg="gazebo_ros" type="spawn_model"
+     args="$(arg init_pose) -urdf -param /robot_description -model $(arg robot_name)"
+     respawn="false" output="screen" />
+    <!-- <remap from="scan" to="lidar_topic"/> -->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen" >
+        <param name="publish_frequency" type="double" value="60.0" />
+    </node>
+  
+    <rosparam ns ="$(arg robot_name)" file="$(find my_robot_simulation_control)/config/control.yaml" command="load"/>
+    <node name="controller_spawner_$(arg robot_name)" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="$(arg robot_name)" args="$(arg robot_name)/left_wheel_controller $(arg robot_name)/right_wheel_controller $(arg robot_name)/joint_state_controller"/>
+
+</launch>
