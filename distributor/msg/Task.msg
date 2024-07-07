@@ -1,0 +1,9 @@
+string topic
+int8 status
+int8 number_robot
+bool urgently
+float32 x
+float32 y
+int8 level
+time start
+time finish
